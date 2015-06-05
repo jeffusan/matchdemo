@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:batch-int="http://www.springframework.org/schema/batch-integration"
+       xmlns:int-file="http://www.springframework.org/schema/integration/file"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+    http://www.springframework.org/schema/batch-integration
+    http://www.springframework.org/schema/batch-integration/spring-batch-integration.xsd
+    		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		 http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+
+    <int:channel id="inboundFileChannel"/>
+    <int:channel id="outboundJobRequestChannel"/>
+    <int:channel id="jobLaunchReplyChannel"/>
+
+    <int-file:inbound-channel-adapter id="filePoller"
+                                      channel="inboundFileChannel"
+                                      directory="${filesin}"
+                                      auto-create-directory="true"
+                                      filename-pattern="*.csv">
+        <int:poller  fixed-rate="1000" />
+    </int-file:inbound-channel-adapter>
+
+    <int:transformer input-channel="inboundFileChannel"
+                     output-channel="outboundJobRequestChannel">
+        <bean class="com.tamr.field.batch.JobRequstTransformer">
+            <property name="job" ref="importMatchJob"/>
+            <property name="fileParameterName" value="FileName"/>
+        </bean>
+    </int:transformer>
+
+    <batch-int:job-launching-gateway request-channel="outboundJobRequestChannel"
+                                     reply-channel="jobLaunchReplyChannel"/>
+
+    <int:logging-channel-adapter channel="jobLaunchReplyChannel"/>
+
+
+    <int:channel id="stepExecutionsChannel"/>
+
+    <int:gateway id="notificationExecutionsListener"
+                 service-interface="org.springframework.batch.core.StepExecutionListener"
+                 default-request-channel="stepExecutionsChannel" default-reply-timeout="10"/>
+
+
+    <int:logging-channel-adapter id="stepLoggingChannel"/>
+
+   <int:router input-channel="stepExecutionsChannel"  default-output-channel="stepLoggingChannel" resolution-required="false" expression="payload.status">
+        <int:mapping value="COMPLETED" channel="channel05"/>
+    </int:router>
+
+
+    <int:transformer input-channel="channel05"
+                     output-channel="filesOut"
+                     expression="new java.io.File(payload.getJobExecution().getJobParameters().getString('FileName'))"/>
+
+
+    <int-file:outbound-channel-adapter id="filesOut" directory="${filesout}" auto-create-directory="true" delete-source-files="true"/>
+
+
+</beans>

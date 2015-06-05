@@ -1,0 +1,40 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="http://w2ui.com/src/w2ui-1.4.min.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://w2ui.com/src/w2ui-1.4.min.js"></script>
+</head>
+<body>
+<div id="myGrid" style="height: 450px"></div>
+</body>
+<script>
+
+
+
+    $('#myGrid').w2grid({
+        name   : 'myGrid',
+        url    : '/match/pendingmatch',
+        recid  : 'entity',
+        columns: [
+            { field: 'first_name', caption: 'First Name', size: '30%' },
+            { field: 'last_name', caption: 'Last Name', size: '30%' },
+            { field: 'city', caption: 'City', size: '40%' },
+            { field: 'stste', caption: 'State', size: '120px' },
+            { field: 'maritalstatus', caption: 'Marital Status', size: '120px' },
+            { field: 'ssn', caption: 'SSN', size: '120px' },
+            { field: 'employer', caption: 'Employer', size: '120px' },
+            { field: 'account', caption: 'Account', size: '120px' },
+
+        ],
+        onClick: function(event) {
+        	console.log(event);
+        	$("#h_v").val(event.recid);
+        	w2popup.load({url:'/popup.html',width:'800',height:'600'})
+        }
+    });
+</script>
+
+<input type="hidden" value="" id='h_v' class='h_v'>
+
+</html>
+
