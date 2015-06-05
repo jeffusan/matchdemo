@@ -1,0 +1,137 @@
+ <div id="popup1" style="display: none; width: 600px; height: 400px; overflow: hidden">
+ <div rel="title">
+ 	Match Comparison
+ </div>
+ <div rel="body" style="padding: 10px; line-height: 150%">
+
+     <form id="myForm">
+<table id="personDataTable">
+    <tr>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+        <th>Source File</th>
+        <th>Input File</th>
+        <th>&nbsp;</th>
+
+    </tr>
+    
+</table>
+
+     </form>
+ <div class="w2ui-buttons">
+      
+    </div>
+</div>
+<div rel="buttons">
+ 	    <button class="btn" name="update" onclick="updateMatch()">Update Match from Input File</button>
+        <button class="btn" name="delete" onclick="deleteMatch()">Delete Match Use Source</button>
+    <button class="btn" name="merge" onclick="submitFormsss()">Merge Match</button>
+
+    <button class="btn" onclick="w2popup.close()" name="save">Cancel</button>
+        
+</div>
+</div>
+<script>
+
+    function submitFormsss() {
+        var myCheckboxes = {};
+        $('input:radio:checked').each(function() {
+            myCheckboxes[$(this).attr('id')] = $(this).val();
+        });
+        $.ajax({
+            url:'/match/pendingmatch/merge/'+hv,
+            method:'POST',
+            data:JSON.stringify(myCheckboxes),
+            contentType:'application/json',
+            success: function (data) {
+                w2ui['myGrid'].reload()
+                w2popup.close()
+
+            }
+        });
+
+
+    }
+
+function deleteMatch(){
+	
+	$.ajax({
+		url:'/match/pendingmatch/delete/'+hv,
+			success: function (data) {
+				 w2ui['myGrid'].reload()
+
+				w2popup.close()
+			   
+			}
+
+	});
+	
+}
+
+
+function updateMatch(){
+	
+	$.ajax({
+		url:'/match/pendingmatch/match/'+hv,
+			success: function (data) {
+				 w2ui['myGrid'].reload()
+				 w2popup.close()
+			   
+			}
+
+	});
+	
+}
+
+
+
+var hv = $('#h_v').val();
+
+$.ajax({
+	url:'/match/pendingmatch/'+hv,
+		success: function (data) {
+
+		    
+		    for(var key in data.matchRecord){
+		    	if(key != 'tamrid' && key != 'entity')
+		    	drawRow(data.matchRecord, data.tamrRecord,key);
+		    }
+		}
+});
+
+
+function drawRow(matchRecord, rowData,key) {
+    var row = $("<tr />")
+    $("#personDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+   	var bgcolor='white'
+    var matchDataStr = matchRecord[key];
+    var matchRecordStr = rowData[key];
+
+    if(!matchRecordStr){
+        matchRecordStr = "";
+    }
+
+    if(!matchDataStr){
+        matchDataStr = "";
+    }
+
+    if(matchRecordStr!=matchDataStr){
+    	bgcolor='red'
+        row.append($("<td><input type='radio' name='"+key+"' id='"+key+"' value='"+matchRecordStr+"'></td>"))
+    }else{
+        row.append($("<td>&nbsp;</td>"))
+
+    }
+    row.append($("<td bgcolor="+bgcolor+">" + key + "</td>"));
+    row.append($("<td bgcolor="+bgcolor+">" + matchRecordStr + "</td>"));
+    row.append($("<td bgcolor="+bgcolor+">" + matchDataStr + "</td>"));
+    if(matchRecordStr!=matchDataStr){
+        row.append($("<td><input type='radio' name='"+key+"' id='"+key+"' value='"+matchDataStr+"'></td>"))
+    }else{
+        row.append($("<td>&nbsp;</td>"))
+
+    }
+}
+
+
+</script>

@@ -1,0 +1,9 @@
+  _                          __ _      _     _
+ | |_ __ _ _ __ ___  _ __   / _(_) ___| | __| |
+ | __/ _` | '_ ` _ \| '__| | |_| |/ _ \ |/ _` |
+ | || (_| | | | | | | |    |  _| |  __/ | (_| |
+  \__\__,_|_| |_| |_|_|    |_| |_|\___|_|\__,_|
+
+Credit Suisse Integration Application
+Spring Boot Version: ${spring-boot.formatted-version}
+Application Version: ${application.version}
