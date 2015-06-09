@@ -4,7 +4,7 @@
 
 	<groupId>com.tamr.field</groupId>
 	<artifactId>matchdemo</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.3</version>
 	<packaging>pom</packaging>
 
 	<name>matchdemo</name>
