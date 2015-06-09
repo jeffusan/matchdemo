@@ -4,7 +4,7 @@
 
 	<groupId>com.tamr.field</groupId>
 	<artifactId>field-common</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<packaging>jar</packaging>
 
 	<name>field-common</name>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>com.tamr.field</groupId>
 		<artifactId>matchdemo</artifactId>
-		<version>0.0.3</version>
+		<version>0.0.4</version>
 	</parent>
 
 	<properties>
